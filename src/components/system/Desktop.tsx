@@ -39,6 +39,7 @@ export function Desktop() {
           key={win.id}
           id={win.id}
           app={win.app}
+          data={win.data}
           zIndex={win.zIndex}
           isMinimized={win.isMinimized}
           isMaximized={win.isMaximized}

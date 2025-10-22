@@ -9,6 +9,7 @@ import type { App } from '@/lib/apps.config';
 interface AppWindowProps {
   id: string;
   app: App;
+  data?: any;
   zIndex: number;
   isMinimized: boolean;
   isMaximized: boolean;
@@ -16,7 +17,7 @@ interface AppWindowProps {
   size: { width: number | string; height: number | string };
 }
 
-export function AppWindow({ id, app, zIndex, isMinimized, isMaximized, position, size }: AppWindowProps) {
+export function AppWindow({ id, app, data, zIndex, isMinimized, isMaximized, position, size }: AppWindowProps) {
   const { closeApp, focusApp, toggleMinimize, toggleMaximize, updateWindow } = useDesktop();
 
   if (isMinimized) {
@@ -75,7 +76,7 @@ export function AppWindow({ id, app, zIndex, isMinimized, isMaximized, position,
           </div>
         </header>
         <main className="flex-grow overflow-auto">
-          <app.Component />
+          <app.Component data={data} />
         </main>
       </div>
     </Rnd>

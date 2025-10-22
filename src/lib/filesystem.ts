@@ -2,6 +2,7 @@ export type FileSystemItem = {
   id: string;
   name: string;
   type: 'folder' | 'file';
+  content?: string; // For files
   children?: FileSystemItem[];
 };
 
@@ -30,7 +31,7 @@ export const mockFileSystem: FileSystemItem[] = [
             type: 'folder',
             children: [
               { id: 'project-plan.pdf', name: 'project-plan.pdf', type: 'file' },
-              { id: 'notes.txt', name: 'notes.txt', type: 'file' },
+              { id: 'notes.txt', name: 'notes.txt', type: 'file', content: 'This is a note inside a text file.' },
             ],
           },
           {

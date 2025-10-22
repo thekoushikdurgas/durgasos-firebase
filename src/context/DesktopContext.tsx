@@ -1,13 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 import type { App } from '@/lib/apps.config';
 import { useWindowStore } from '@/store/windowStore';
 
 interface DesktopContextType {
   isStartMenuOpen: boolean;
   setStartMenuOpen: (isOpen: boolean) => void;
-  openApp: (appId: string) => void;
+  openApp: (appId: string, data?: any) => void;
   closeApp: (id: string) => void;
   focusApp: (id: string) => void;
   toggleMinimize: (id: string) => void;
@@ -31,28 +31,17 @@ export const DesktopProvider = ({ children }: { children: ReactNode }) => {
     setStartMenuOpen,
   } = useWindowStore();
 
-  useEffect(() => {
-    // Open Welcome app on initial load
-    const hasOpenedWelcome = useWindowStore.getState().hasOpenedWelcome;
-    if (!hasOpenedWelcome) {
-      openAppFromStore('welcome');
-      useWindowStore.setState({ hasOpenedWelcome: true });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const openApp = (appId: string) => {
-    const appWindow = windows.find(w => w.app.id === appId);
+  const openApp = (appId: string, data?: any) => {
+    const appWindow = windows.find(w => w.app.id === appId && !w.data); // Only reuse if no new data
     if(appWindow) {
       if(appWindow.isMinimized) {
         toggleMinimize(appWindow.id);
       }
       focusApp(appWindow.id);
     } else {
-      openAppFromStore(appId);
+      openAppFromStore(appId, data);
     }
   }
-
 
   return (
     <DesktopContext.Provider

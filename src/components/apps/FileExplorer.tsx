@@ -2,13 +2,16 @@
 
 import { useState } from 'react';
 import { mockFileSystem, type FileSystemItem } from '@/lib/filesystem';
-import { Folder, File, Home, ChevronRight, List, Grid } from 'lucide-react';
+import { apps } from '@/lib/apps.config';
+import { useDesktop } from '@/context/DesktopContext';
+import { Folder, File, ChevronRight, List, Grid } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 export default function FileExplorer() {
   const [currentPath, setCurrentPath] = useState<string[]>(['C:', 'Users', 'Durgas']);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const { openApp } = useDesktop();
 
   const getCurrentItems = () => {
     let items: FileSystemItem[] = mockFileSystem;
@@ -17,8 +20,6 @@ export default function FileExplorer() {
       if (folder && folder.children) {
         items = folder.children;
       } else if (part !== 'C:') {
-        // Path part not found, reset to a safe default
-        // This is a simplistic recovery, a real implementation would be more robust
         return [];
       }
     }
@@ -31,8 +32,15 @@ export default function FileExplorer() {
     if (item.type === 'folder') {
       setCurrentPath([...currentPath, item.name]);
     } else {
-      // Handle file opening logic here
-      console.log(`Opening file: ${item.name}`);
+      const fileExtension = '.' + item.name.split('.').pop();
+      const appToOpen = apps.find(app => app.fileAssociation === fileExtension);
+      
+      if (appToOpen) {
+        openApp(appToOpen.id, { content: item.content, fileName: item.name });
+      } else {
+        console.log(`No application associated with ${fileExtension} files.`);
+        // Optionally, open a dialog or a default text viewer
+      }
     }
   };
   
