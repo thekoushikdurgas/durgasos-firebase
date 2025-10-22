@@ -1,3 +1,32 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { BootScreen } from '@/components/system/BootScreen';
+import { Desktop } from '@/components/system/Desktop';
+import { Taskbar } from '@/components/system/Taskbar';
+import { DesktopProvider } from '@/context/DesktopContext';
+
 export default function Home() {
-  return <></>;
+  const [booting, setBooting] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setBooting(false);
+    }, 3000); // Simulate a 3-second boot time
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (booting) {
+    return <BootScreen />;
+  }
+
+  return (
+    <DesktopProvider>
+      <div className="h-screen w-screen overflow-hidden bg-black select-none">
+        <Desktop />
+        <Taskbar />
+      </div>
+    </DesktopProvider>
+  );
 }

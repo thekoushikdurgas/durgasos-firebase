@@ -1,3 +1,70 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "desktop-wallpaper",
+      "description": "Windows 11 style abstract wallpaper",
+      "imageUrl": "https://images.unsplash.com/photo-1689005046927-0aa9f398247a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhYnN0cmFjdCUyMHdhbGxwYXBlcnxlbnwwfHx8fDE3NjExMDYxNjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract wallpaper"
+    },
+    {
+      "id": "user-avatar",
+      "description": "User avatar for about me page",
+      "imageUrl": "https://images.unsplash.com/photo-1650057861788-b6b8606b77ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwb3J0cmFpdCUyMHBlcnNvbnxlbnwwfHx8fDE3NjExNjE2MzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "portrait person"
+    },
+    {
+      "id": "portfolio-project-1",
+      "description": "Placeholder for first portfolio project",
+      "imageUrl": "https://images.unsplash.com/photo-1675495277087-10598bf7bcd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0ZWNobm9sb2d5JTIwY29kZXxlbnwwfHx8fDE3NjEwNTYxMjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "technology code"
+    },
+    {
+      "id": "portfolio-project-2",
+      "description": "Placeholder for second portfolio project",
+      "imageUrl": "https://images.unsplash.com/photo-1542744094-3a31f272c490?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3ZWIlMjBkZXNpZ258ZW58MHx8fHwxNzYxMTY1MjE2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "web design"
+    },
+    {
+      "id": "portfolio-project-3",
+      "description": "Placeholder for third portfolio project",
+      "imageUrl": "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkYXRhJTIwdmlzdWFsaXphdGlvbnxlbnwwfHx8fDE3NjEwOTcxODN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "data visualization"
+    },
+    {
+      "id": "portfolio-project-4",
+      "description": "Placeholder for fourth portfolio project",
+      "imageUrl": "https://images.unsplash.com/photo-1523206489230-c012c64b2b48?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtb2JpbGUlMjBhcHB8ZW58MHx8fHwxNzYxMDc2ODI3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mobile app"
+    },
+    {
+      "id": "app-store-1",
+      "description": "App store item 1",
+      "imageUrl": "https://images.unsplash.com/photo-1738458786007-03c0c4b7a804?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsb2dvJTIwYnJhbmR8ZW58MHx8fHwxNzYxMTQ4MjA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "logo brand"
+    },
+    {
+      "id": "app-store-2",
+      "description": "App store item 2",
+      "imageUrl": "https://images.unsplash.com/photo-1760008486577-21baa8b560a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxpY29uJTIwbW9kZXJufGVufDB8fHx8MTc2MTE3MDQ2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "icon modern"
+    },
+    {
+      "id": "app-store-3",
+      "description": "App store item 3",
+      "imageUrl": "https://images.unsplash.com/photo-1760037028517-e5cc6e3ebd3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtaW5pbWFsaXN0JTIwbG9nb3xlbnwwfHx8fDE3NjExNDk1NTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "minimalist logo"
+    },
+    {
+      "id": "app-store-4",
+      "description": "App store item 4",
+      "imageUrl": "https://images.unsplash.com/photo-1644058986421-237d141a9a66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjb2xvcmZ1bCUyMGljb258ZW58MHx8fHwxNzYxMTU1Nzc0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "colorful icon"
+    },
+    {
+      "id": "welcome-hero",
+      "description": "Welcome image for the welcome app",
+      "imageUrl": "https://images.unsplash.com/photo-1683285083876-a491c33dcece?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx3aW5kb3dzJTIwYWJzdHJhY3R8ZW58MHx8fHwxNzYxMTcwNDY3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "windows abstract"
+    }
+  ]
 }
