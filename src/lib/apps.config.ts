@@ -1,5 +1,7 @@
+'use client';
+
 import type { ComponentType } from 'react';
-import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook } from 'lucide-react';
+import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon } from 'lucide-react';
 
 import AboutMe from '@/components/apps/AboutMe';
 import Portfolio from '@/components/apps/Portfolio';
@@ -9,6 +11,7 @@ import Welcome from '@/components/apps/Welcome';
 import FileExplorer from '@/components/apps/FileExplorer';
 import SettingsApp from '@/components/apps/Settings';
 import Notepad from '@/components/apps/Notepad';
+import Terminal from '@/components/apps/Terminal';
 
 export interface App {
   id: string;
@@ -97,5 +100,14 @@ export const apps: App[] = [
     desktop: false,
     defaultSize: { width: 500, height: 400 },
     fileAssociation: '.txt',
+  },
+  {
+    id: 'terminal',
+    title: 'Terminal',
+    Icon: TerminalIcon,
+    Component: Terminal,
+    pinned: true,
+    desktop: true,
+    defaultSize: { width: 640, height: 384 },
   },
 ];
