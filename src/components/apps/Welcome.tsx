@@ -6,12 +6,15 @@ import { useDesktop } from "@/context/DesktopContext";
 import Image from "next/image";
 
 export default function Welcome() {
-  const { openApp, closeApp } = useDesktop();
+  const { openApp, closeApp, windows } = useDesktop();
   const welcomeImage = PlaceHolderImages.find((p) => p.id === 'welcome-hero');
 
   const handleExplore = () => {
     openApp('portfolio');
-    closeApp(windows.find(w => w.app.id === 'welcome')?.id || '');
+    const welcomeWindow = windows.find(w => w.app.id === 'welcome');
+    if (welcomeWindow) {
+      closeApp(welcomeWindow.id);
+    }
   };
 
   return (
