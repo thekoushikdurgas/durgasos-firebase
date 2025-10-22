@@ -1,11 +1,12 @@
 import type { ComponentType } from 'react';
-import { Briefcase, Globe, User, Store, Smile } from 'lucide-react';
+import { Briefcase, Globe, User, Store, Smile, Folder } from 'lucide-react';
 
 import AboutMe from '@/components/apps/AboutMe';
 import Portfolio from '@/components/apps/Portfolio';
 import Browser from '@/components/apps/Browser';
 import AppStore from '@/components/apps/AppStore';
 import Welcome from '@/components/apps/Welcome';
+import FileExplorer from '@/components/apps/FileExplorer';
 
 export interface App {
   id: string;
@@ -47,6 +48,15 @@ export const apps: App[] = [
     pinned: true,
     desktop: true,
     defaultSize: { width: 900, height: 650 },
+  },
+  {
+    id: 'explorer',
+    title: 'File Explorer',
+    Icon: Folder,
+    Component: FileExplorer,
+    pinned: true,
+    desktop: true,
+    defaultSize: { width: 800, height: 600 },
   },
   {
     id: 'browser',

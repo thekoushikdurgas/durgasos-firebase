@@ -8,6 +8,13 @@
 - Resizable Windows: Implement fully resizable application windows with standard minimize, maximize, and close controls.
 - System Tray Functionality: Enable working functionality for system tray icons and notifications.
 - Authentic Visuals: Ensure all UI components mimic the look and feel of Windows 11 through accurate visuals and effects.
+- File Explorer: The File Explorer is a comprehensive tool for managing the virtual file system.
+    -   Navigate through a hierarchical folder structure.
+    -   Double-click to open files in their associated applications (e.g., `.txt` in Notepad, `.mp4` in Video Player).
+    -   Right-click context menu for file and folder operations.
+    -   Create new folders.
+    -   Rename and delete files and folders.
+    -   A details pane to preview selected items.
 
 ## Style Guidelines:
 
