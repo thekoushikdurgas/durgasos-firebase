@@ -1,8 +1,13 @@
-import type {Metadata} from 'next';
+'use client';
+
+import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { useSettingsStore } from '@/store/settingsStore';
+import { useEffect } from 'react';
 
-export const metadata: Metadata = {
+// This is a client component because it uses hooks to update the theme
+const metadata: Metadata = {
   title: 'DurgasOS',
   description: 'A Windows 11 desktop simulator built with Next.js',
 };
@@ -12,8 +17,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { theme, accent } = useSettingsStore();
+
+  useEffect(() => {
+    document.documentElement.className = theme;
+    document.documentElement.setAttribute('data-accent', accent);
+  }, [theme, accent]);
+
+
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

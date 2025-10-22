@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root, [data-accent="blue"] {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -30,7 +30,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
-  .dark {
+  .dark, .dark[data-accent="blue"] {
     --background: 0 0% 12%;
     --foreground: 0 0% 95%;
     --card: 0 0% 12%;
@@ -55,6 +55,61 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+  }
+
+  [data-accent="green"] {
+    --primary: 142 71% 45%;
+    --accent: 142 71% 35%;
+    --ring: 142 71% 45%;
+  }
+  .dark[data-accent="green"] {
+    --primary: 142 71% 45%;
+    --accent: 142 71% 35%;
+    --ring: 142 71% 45%;
+  }
+
+  [data-accent="orange"] {
+    --primary: 25 95% 53%;
+    --accent: 25 95% 43%;
+    --ring: 25 95% 53%;
+  }
+  .dark[data-accent="orange"] {
+    --primary: 25 95% 53%;
+    --accent: 25 95% 43%;
+    --ring: 25 95% 53%;
+  }
+
+  [data-accent="pink"] {
+    --primary: 322 84% 54%;
+    --accent: 322 84% 44%;
+    --ring: 322 84% 54%;
+  }
+  .dark[data-accent="pink"] {
+    --primary: 322 84% 54%;
+    --accent: 322 84% 44%;
+    --ring: 322 84% 54%;
+  }
+
+  [data-accent="purple"] {
+    --primary: 262 84% 57%;
+    --accent: 262 84% 47%;
+    --ring: 262 84% 57%;
+  }
+  .dark[data-accent="purple"] {
+    --primary: 262 84% 57%;
+    --accent: 262 84% 47%;
+    --ring: 262 84% 57%;
+  }
+
+  [data-accent="red"] {
+    --primary: 0 84% 60%;
+    --accent: 0 84% 50%;
+    --ring: 0 84% 60%;
+  }
+  .dark[data-accent="red"] {
+    --primary: 0 84% 60%;
+    --accent: 0 84% 50%;
+    --ring: 0 84% 60%;
   }
 }
 

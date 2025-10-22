@@ -1,15 +1,17 @@
 'use client';
 
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AppWindow } from '@/components/shared/AppWindow';
 import { useDesktop } from '@/context/DesktopContext';
 import { apps } from '@/lib/apps.config';
 import { DesktopIcon } from '@/components/shared/DesktopIcon';
 import Image from 'next/image';
+import { useSettingsStore } from '@/store/settingsStore';
+import { wallpapers } from '@/lib/wallpapers';
 
 export function Desktop() {
   const { windows } = useDesktop();
-  const wallpaper = PlaceHolderImages.find((p) => p.id === 'desktop-wallpaper');
+  const { wallpaper: wallpaperId } = useSettingsStore();
+  const wallpaper = wallpapers.find((p) => p.id === wallpaperId);
   const desktopApps = apps.filter(app => app.desktop);
 
   return (
@@ -17,7 +19,7 @@ export function Desktop() {
       {wallpaper && (
         <Image
           src={wallpaper.imageUrl}
-          alt={wallpaper.description}
+          alt={wallpaper.description || 'Desktop wallpaper'}
           fill
           quality={100}
           className="object-cover"

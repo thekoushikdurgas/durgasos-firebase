@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { Briefcase, Globe, User, Store, Smile, Folder } from 'lucide-react';
+import { Briefcase, Globe, User, Store, Smile, Folder, Settings } from 'lucide-react';
 
 import AboutMe from '@/components/apps/AboutMe';
 import Portfolio from '@/components/apps/Portfolio';
@@ -7,6 +7,7 @@ import Browser from '@/components/apps/Browser';
 import AppStore from '@/components/apps/AppStore';
 import Welcome from '@/components/apps/Welcome';
 import FileExplorer from '@/components/apps/FileExplorer';
+import SettingsApp from '@/components/apps/Settings';
 
 export interface App {
   id: string;
@@ -75,5 +76,14 @@ export const apps: App[] = [
     pinned: true,
     desktop: false,
     defaultSize: { width: 800, height: 600 },
+  },
+  {
+    id: 'settings',
+    title: 'Settings',
+    Icon: Settings,
+    Component: SettingsApp,
+    pinned: true,
+    desktop: false,
+    defaultSize: { width: 700, height: 550 },
   },
 ];
