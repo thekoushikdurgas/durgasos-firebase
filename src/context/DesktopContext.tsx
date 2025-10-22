@@ -13,6 +13,7 @@ interface DesktopContextType {
   toggleMinimize: (id: string) => void;
   toggleMaximize: (id: string) => void;
   windows: ReturnType<typeof useWindowStore>['windows'];
+  updateWindow: (id: string, updates: Partial<ReturnType<typeof useWindowStore>['windows'][0]>) => void;
 }
 
 const DesktopContext = createContext<DesktopContextType | undefined>(undefined);
@@ -25,13 +26,18 @@ export const DesktopProvider = ({ children }: { children: ReactNode }) => {
     focusApp,
     toggleMinimize,
     toggleMaximize,
+    updateWindow,
     isStartMenuOpen,
     setStartMenuOpen,
   } = useWindowStore();
 
   useEffect(() => {
     // Open Welcome app on initial load
-    openAppFromStore('welcome');
+    const hasOpenedWelcome = useWindowStore.getState().hasOpenedWelcome;
+    if (!hasOpenedWelcome) {
+      openAppFromStore('welcome');
+      useWindowStore.setState({ hasOpenedWelcome: true });
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -57,6 +63,7 @@ export const DesktopProvider = ({ children }: { children: ReactNode }) => {
         focusApp,
         toggleMinimize,
         toggleMaximize,
+        updateWindow,
         isStartMenuOpen,
         setStartMenuOpen,
       }}

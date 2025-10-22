@@ -16,6 +16,7 @@ interface WindowState {
   windows: WindowInstance[];
   nextZIndex: number;
   isStartMenuOpen: boolean;
+  hasOpenedWelcome: boolean;
   openApp: (appId: string) => void;
   closeApp: (id: string) => void;
   focusApp: (id: string) => void;
@@ -29,6 +30,7 @@ export const useWindowStore = create<WindowState>((set, get) => ({
   windows: [],
   nextZIndex: 10,
   isStartMenuOpen: false,
+  hasOpenedWelcome: false,
   setStartMenuOpen: (isOpen) => set({ isStartMenuOpen: isOpen }),
   openApp: (appId) => {
     const appConfig = apps.find((app) => app.id === appId);
