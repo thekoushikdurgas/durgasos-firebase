@@ -113,8 +113,9 @@ const useWindowStore = create<WindowState>((set, get) => ({
 }));
 
 // Open Welcome app on initial load, but only on client
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && useWindowStore.getState().windows.length === 0) {
     useWindowStore.getState().openApp('welcome');
 }
+
 
 export { useWindowStore };
