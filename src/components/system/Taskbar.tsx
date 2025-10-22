@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function Taskbar() {
-  const { windows, isStartMenuOpen, setStartMenuOpen, focusApp, toggleMinimize } = useDesktop();
+  const { windows, isStartMenuOpen, setStartMenuOpen, focusApp, toggleMinimize, openApp } = useDesktop();
   const pinnedApps = apps.filter(app => app.pinned);
 
   const handleAppClick = (appId: string) => {
@@ -21,7 +21,7 @@ export function Taskbar() {
         focusApp(openWindow.id);
       }
     } else {
-       // This case should be handled by openApp in context, but just in case
+       openApp(appId);
     }
   }
 
@@ -65,7 +65,7 @@ export function Taskbar() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => handleAppClick(app.id)}
-                      onDoubleClick={() => useDesktop().openApp(app.id)}
+                      onDoubleClick={() => openApp(app.id)}
                       className="relative p-3 rounded-md hover:bg-white/20"
                     >
                       <app.Icon className="w-6 h-6" />
