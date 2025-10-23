@@ -16,7 +16,7 @@ export const liveAssistant = ai.defineFlow(
     outputSchema: z.void(),
   },
   async (stream) => {
-    const llm = ai.getModel(googleAI.model('gemini-2.5-flash-native-audio-preview-09-2025'));
+    const llm = googleAI.model('gemini-2.5-flash-native-audio-preview-09-2025');
 
     await ai.live.connect(
       {
