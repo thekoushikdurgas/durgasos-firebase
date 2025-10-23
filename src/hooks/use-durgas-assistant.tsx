@@ -140,7 +140,7 @@ export const DurgasAssistantProvider = ({ children }: { children: React.ReactNod
         }
     };
     wakeWordRecognizerRef.current.onerror = (event) => {
-      if (event.error !== 'no-speech') {
+      if (event.error !== 'no-speech' && event.error !== 'aborted') {
         console.error('Wake word recognition error:', event.error);
       }
     };
