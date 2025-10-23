@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentType } from 'react';
-import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon, Film } from 'lucide-react';
+import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon, Film, Wand2 } from 'lucide-react';
 
 import AboutMe from '@/components/apps/AboutMe';
 import Portfolio from '@/components/apps/Portfolio';
@@ -13,6 +13,7 @@ import SettingsApp from '@/components/apps/Settings';
 import Notepad from '@/components/apps/Notepad';
 import Terminal from '@/components/apps/Terminal';
 import VideoPlayer from '@/components/apps/VideoPlayer';
+import ImageStudio from '@/components/apps/ImageStudio';
 
 export interface App {
   id: string;
@@ -120,5 +121,14 @@ export const apps: App[] = [
     desktop: false,
     defaultSize: { width: 640, height: 480 },
     fileAssociation: '.mp4',
+  },
+  {
+    id: 'image-studio',
+    title: 'Image Studio',
+    Icon: Wand2,
+    Component: ImageStudio,
+    pinned: false,
+    desktop: true,
+    defaultSize: { width: 512, height: 640 },
   }
 ];
