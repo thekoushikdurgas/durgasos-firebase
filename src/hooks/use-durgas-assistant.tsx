@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { assistant, textToSpeech } from '@/ai/flows/assistant-flow';
 import { useDesktop } from '@/context/DesktopContext';
+import { MessageData } from 'genkit/experimental/ai';
 
 type AssistantState = 'idle' | 'listening' | 'thinking' | 'speaking';
 
@@ -17,88 +18,175 @@ const DurgasAssistantContext = createContext<DurgasAssistantContextType | undefi
 export const DurgasAssistantProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantState, setAssistantState] = useState<AssistantState>('idle');
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  
+  const wakeWordRecognizerRef = useRef<SpeechRecognition | null>(null);
+  const commandRecognizerRef = useRef<SpeechRecognition | null>(null);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { openApp } = useDesktop();
+  const conversationHistory = useRef<MessageData[]>([]);
+
+
+  const speakResponse = useCallback(async (text: string) => {
+    setAssistantState('speaking');
+    try {
+        const ttsResponse = await textToSpeech({ text });
+        if (ttsResponse.media) {
+            if (!audioRef.current) {
+                audioRef.current = new Audio();
+            }
+            audioRef.current.src = ttsResponse.media;
+            audioRef.current.play();
+            audioRef.current.onended = () => {
+                setIsAssistantOpen(false);
+                setAssistantState('idle');
+                // Restart wake word listener after speaking
+                wakeWordRecognizerRef.current?.start();
+            };
+        } else {
+            setIsAssistantOpen(false);
+            setAssistantState('idle');
+            wakeWordRecognizerRef.current?.start();
+        }
+    } catch (error) {
+        console.error('TTS error:', error);
+        setIsAssistantOpen(false);
+        setAssistantState('idle');
+        wakeWordRecognizerRef.current?.start();
+    }
+}, []);
+
+  const executeFunctionCall = useCallback((toolCall: any) => {
+    // In a real app, you would have a mapping of tool names to actual functions.
+    if(toolCall.name === 'openApp') {
+        openApp(toolCall.input.appId);
+        return `Successfully opened the ${toolCall.input.appId} application.`;
+    }
+    if(toolCall.name === 'createFolder') {
+        // Here you would interact with your file system state
+        console.log(`Simulating folder creation: ${toolCall.input.folderName}`);
+        return `Folder '${toolCall.input.folderName}' created successfully.`;
+    }
+    return `Unknown tool: ${toolCall.name}`;
+}, [openApp]);
 
   const processCommand = useCallback(async (prompt: string) => {
     setAssistantState('thinking');
+    conversationHistory.current = [{ role: 'user', content: [{ text: prompt }] }];
+    
     try {
-      const response = await assistant({ prompt });
-      
-      if(response.toolCall?.name === 'openApp' && response.toolCall?.input.appId) {
-        openApp(response.toolCall.input.appId);
-      }
+        // First API call to get intent / function call
+        const response1 = await assistant({ prompt });
 
-      setAssistantState('speaking');
-      const ttsResponse = await textToSpeech({ text: response.text });
-      
-      if (ttsResponse.media) {
-        if (!audioRef.current) {
-          audioRef.current = new Audio();
+        if (response1.toolCall) {
+            conversationHistory.current.push({ role: 'model', content: [response1] });
+            const toolResult = executeFunctionCall(response1.toolCall);
+            
+            conversationHistory.current.push({
+                role: 'tool',
+                content: [{
+                    id: response1.toolCall.id,
+                    tool: { name: response1.toolCall.name, output: toolResult }
+                }]
+            });
+            
+            // Second API call with tool result to get natural language response
+            const finalResponse = await assistant({ history: conversationHistory.current });
+            await speakResponse(finalResponse.text);
+
+        } else {
+            // No tool call, just speak the direct response
+            await speakResponse(response1.text);
         }
-        audioRef.current.src = ttsResponse.media;
-        audioRef.current.play();
-        audioRef.current.onended = () => {
-          setIsAssistantOpen(false);
-          setAssistantState('idle');
-        };
-      } else {
-        setIsAssistantOpen(false);
-        setAssistantState('idle');
-      }
+
     } catch (error) {
-      console.error('Assistant error:', error);
-      setAssistantState('idle');
-      setIsAssistantOpen(false);
+        console.error('Assistant error:', error);
+        await speakResponse("Sorry, I ran into an error.");
     }
-  }, [openApp]);
+  }, [executeFunctionCall, speakResponse]);
+
+  const startCommandRecognition = useCallback(() => {
+    setIsAssistantOpen(true);
+    setAssistantState('listening');
+    commandRecognizerRef.current?.start();
+  }, []);
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) {
-      console.error('Speech recognition not supported in this browser.');
-      return;
+        console.error('Speech recognition not supported in this browser.');
+        return;
     }
-
     const SpeechRecognition = window.webkitSpeechRecognition;
-    recognitionRef.current = new SpeechRecognition();
-    recognitionRef.current.continuous = false;
-    recognitionRef.current.interimResults = false;
-    recognitionRef.current.lang = 'en-US';
 
-    recognitionRef.current.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      console.log('Transcript:', transcript);
-      processCommand(transcript);
-    };
-
-    recognitionRef.current.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      setAssistantState('idle');
-      setIsAssistantOpen(false);
-    };
+    // Wake Word Recognizer
+    wakeWordRecognizerRef.current = new SpeechRecognition();
+    wakeWordRecognizerRef.current.continuous = true;
+    wakeWordRecognizerRef.current.interimResults = false;
+    wakeWordRecognizerRef.current.lang = 'en-US';
     
-    recognitionRef.current.onend = () => {
-        if(assistantState === 'listening') {
+    wakeWordRecognizerRef.current.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            const transcript = event.results[i][0].transcript.trim().toLowerCase();
+            if (transcript.includes('durgas')) {
+                console.log('Wake word detected!');
+                wakeWordRecognizerRef.current?.stop();
+                startCommandRecognition();
+            }
+        }
+    };
+    wakeWordRecognizerRef.current.onerror = (event) => console.error('Wake word recognition error:', event.error);
+    wakeWordRecognizerRef.current.start();
+
+
+    // Command Recognizer
+    commandRecognizerRef.current = new SpeechRecognition();
+    commandRecognizerRef.current.continuous = false;
+    commandRecognizerRef.current.interimResults = false;
+    commandRecognizerRef.current.lang = 'en-US';
+
+    commandRecognizerRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        console.log('Command Transcript:', transcript);
+        processCommand(transcript);
+    };
+
+    commandRecognizerRef.current.onerror = (event) => {
+        console.error('Command recognition error:', event.error);
+        setAssistantState('idle');
+        setIsAssistantOpen(false);
+        // Restart wake word listener on error
+        if(wakeWordRecognizerRef.current?.onend === null) wakeWordRecognizerRef.current?.start();
+    };
+
+    commandRecognizerRef.current.onend = () => {
+        // This will fire after speech stops. If we are still in 'listening'
+        // it means no command was processed, so we go back to idle.
+        if (assistantState === 'listening') {
             setAssistantState('idle');
             setIsAssistantOpen(false);
+            // Restart wake word listener
+            wakeWordRecognizerRef.current?.start();
         }
     };
 
-  }, [processCommand, assistantState]);
-  
+    return () => {
+      wakeWordRecognizerRef.current?.stop();
+      commandRecognizerRef.current?.stop();
+    }
+
+  }, [processCommand, startCommandRecognition, assistantState]);
+
   const toggleAssistant = () => {
     if (isAssistantOpen) {
-      recognitionRef.current?.stop();
-      setIsAssistantOpen(false);
-      setAssistantState('idle');
+        commandRecognizerRef.current?.stop();
+        setIsAssistantOpen(false);
+        setAssistantState('idle');
+        wakeWordRecognizerRef.current?.start();
     } else {
-      setIsAssistantOpen(true);
-      setAssistantState('listening');
-      recognitionRef.current?.start();
+        wakeWordRecognizerRef.current?.stop();
+        startCommandRecognition();
     }
   };
-
 
   return (
     <DurgasAssistantContext.Provider value={{ isAssistantOpen, assistantState, toggleAssistant }}>
