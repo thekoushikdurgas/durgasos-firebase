@@ -2,14 +2,14 @@
 /**
  * @fileOverview A Genkit flow for handling real-time voice conversations.
  *
- * - liveAssistant - A flow that establishes a bidirectional audio stream with Gemini.
+ * - liveAssistantFlow - A function that establishes a bidirectional audio stream with Gemini.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
-export const liveAssistant = ai.defineFlow(
+const liveAssistant = ai.defineFlow(
   {
     name: 'liveAssistant',
     inputSchema: z.void(),
@@ -43,3 +43,7 @@ export const liveAssistant = ai.defineFlow(
     );
   }
 );
+
+export async function liveAssistantFlow(stream: any) {
+  return await liveAssistant(stream);
+}

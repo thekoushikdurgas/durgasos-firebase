@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { liveAssistant } from '@/ai/flows/live-assistant-flow';
+import { liveAssistantFlow } from '@/ai/flows/live-assistant-flow';
 import { Mic, MicOff, Bot, User, Loader2, Circle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -29,7 +29,7 @@ export default function LiveAssistant() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
 
-      const live = await liveAssistant();
+      const live = await liveAssistantFlow();
 
       mediaRecorderRef.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
