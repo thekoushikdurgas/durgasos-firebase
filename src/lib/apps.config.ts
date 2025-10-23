@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentType } from 'react';
-import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon, Film, Wand2, MessageCircle, MicVocal } from 'lucide-react';
+import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon, Film, Wand2, MessageCircle, Mic } from 'lucide-react';
 
 import AboutMe from '@/components/apps/AboutMe';
 import Portfolio from '@/components/apps/Portfolio';
@@ -145,7 +145,7 @@ export const apps: App[] = [
   {
     id: 'live-assistant',
     title: 'Live Assistant',
-    Icon: MicVocal,
+    Icon: Mic,
     Component: LiveAssistant,
     pinned: false,
     desktop: true,
