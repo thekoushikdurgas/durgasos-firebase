@@ -6,6 +6,7 @@ import { liveAssistantFlow } from '@/ai/flows/live-assistant-flow';
 import { Mic, MicOff, Bot, User, Loader2, Circle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 type TranscriptionPart = {
   text: string;
@@ -19,7 +20,24 @@ export default function LiveAssistant() {
   const [transcription, setTranscription] = useState<TranscriptionPart[]>([]);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
+  const liveSessionRef = useRef<any | null>(null);
+  const { toast } = useToast();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+
+  const scrollToBottom = () => {
+    if (scrollAreaRef.current) {
+        const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+        if (viewport) {
+            viewport.scrollTop = viewport.scrollHeight;
+        }
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [transcription]);
+
 
   const startConnection = async () => {
     setIsConnecting(true);
@@ -30,9 +48,10 @@ export default function LiveAssistant() {
       mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
 
       const live = await liveAssistantFlow();
+      liveSessionRef.current = live;
 
       mediaRecorderRef.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
+        if (event.data.size > 0 && liveSessionRef.current) {
           live.send(event.data);
         }
       };
@@ -45,64 +64,86 @@ export default function LiveAssistant() {
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
+      
+      let nextStartTime = 0;
 
       for await (const chunk of live.stream()) {
-        if (chunk.output?.transcription) {
-          const newPart: TranscriptionPart = {
-            text: chunk.output.transcription.text,
-            source: 'model',
-            final: chunk.output.transcription.final,
-          };
+        if (chunk.output?.transcription || chunk.input?.transcription) {
+          const isModel = !!chunk.output?.transcription;
+          const source = isModel ? 'model' : 'user';
+          const t = isModel ? chunk.output.transcription : chunk.input.transcription;
+
           setTranscription((prev) => {
-            const last = prev[prev.length - 1];
-            if (last && last.source === 'model' && !last.final) {
-              const newPrev = [...prev];
-              newPrev[newPrev.length -1] = {...last, text: last.text + newPart.text};
-              return newPrev;
-            }
-            return [...prev, newPart];
-          });
-        }
-        if (chunk.input?.transcription) {
-          const newPart: TranscriptionPart = {
-            text: chunk.input.transcription.text,
-            source: 'user',
-            final: chunk.input.transcription.final,
-          };
-          setTranscription((prev) => {
-            const last = prev[prev.length - 1];
-            if (last && last.source === 'user' && !last.final) {
-              const newPrev = [...prev];
-              newPrev[newPrev.length -1] = {...last, text: newPart.text};
-              return newPrev;
-            }
-            return [...prev, newPart];
+             const last = prev[prev.length - 1];
+             // If the last part is not final and from the same source, append to it
+             if (last && last.source === source && !last.final) {
+                const newPrev = [...prev];
+                newPrev[newPrev.length - 1] = {
+                    source,
+                    text: last.text + t.text,
+                    final: t.final,
+                };
+                return newPrev;
+             }
+             // Otherwise, if it's a final part, create a new entry for the next part
+             if (last && last.final) {
+                return [...prev, { source, text: t.text, final: t.final }];
+             }
+             // If the last part was from a different source, create a new entry
+             if(last && last.source !== source) {
+                return [...prev, { source, text: t.text, final: t.final }];
+             }
+             // Default case: just append
+             return [...prev, { source, text: t.text, final: t.final }];
           });
         }
         if (chunk.output?.audio) {
-          const audioData = chunk.output.audio as unknown as ArrayBuffer;
-          const audioBuffer = await audioContextRef.current.decodeAudioData(audioData);
-          sourceNodeRef.current = audioContextRef.current.createBufferSource();
-          sourceNodeRef.current.buffer = audioBuffer;
-          sourceNodeRef.current.connect(audioContextRef.current.destination);
-          sourceNodeRef.current.start();
+            const audioData = chunk.output.audio as unknown as ArrayBuffer;
+            const audioBuffer = await audioContextRef.current.decodeAudioData(audioData);
+            
+            const sourceNode = audioContextRef.current.createBufferSource();
+            sourceNode.buffer = audioBuffer;
+            sourceNode.connect(audioContextRef.current.destination);
+
+            const currentTime = audioContextRef.current.currentTime;
+            const startTime = nextStartTime < currentTime ? currentTime : nextStartTime;
+            
+            sourceNode.start(startTime);
+            nextStartTime = startTime + audioBuffer.duration;
         }
       }
-    } catch (err) {
+
+    } catch (err: any) {
       console.error('Error starting live assistant:', err);
+      toast({
+          variant: "destructive",
+          title: "Connection Error",
+          description: err.message || "Could not connect to the live assistant."
+      })
       setIsConnecting(false);
+    } finally {
+        stopConnection();
     }
   };
 
   const stopConnection = () => {
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    if (liveSessionRef.current) {
+        liveSessionRef.current.close();
+        liveSessionRef.current = null;
     }
-    if (sourceNodeRef.current) {
-      sourceNodeRef.current.stop();
+    if (mediaRecorderRef.current) {
+      if (mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      mediaRecorderRef.current = null;
+    }
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+       audioContextRef.current.close();
+       audioContextRef.current = null;
     }
     setIsConnected(false);
+    setIsConnecting(false);
   };
 
   useEffect(() => {
@@ -126,7 +167,7 @@ export default function LiveAssistant() {
         )}
       </div>
 
-      <ScrollArea className="flex-grow border rounded-lg p-4 bg-secondary/30">
+      <ScrollArea className="flex-grow border rounded-lg p-4 bg-secondary/30" ref={scrollAreaRef}>
         <div className="space-y-4">
           {transcription.map((part, index) => (
             <div
@@ -149,10 +190,16 @@ export default function LiveAssistant() {
               {part.source === 'user' && <User className="w-6 h-6 flex-shrink-0" />}
             </div>
           ))}
-          {transcription.length === 0 && (
+          {!isConnecting && transcription.length === 0 && (
              <div className="text-center text-muted-foreground pt-16">
                 <Mic className="mx-auto h-12 w-12 text-gray-400" />
                 <p className="mt-4">Click "Start Conversation" to talk to Gemini.</p>
+              </div>
+          )}
+          {isConnecting && (
+              <div className="text-center text-muted-foreground pt-16">
+                <Loader2 className="mx-auto h-12 w-12 text-gray-400 animate-spin" />
+                <p className="mt-4">Connecting to the assistant...</p>
               </div>
           )}
         </div>
