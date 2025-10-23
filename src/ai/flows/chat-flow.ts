@@ -22,9 +22,12 @@ export async function chat(input: z.infer<typeof ChatInputSchema>) {
 
   const response = await ai.generate({
     model: googleAI.model(model),
-    prompt: {
-      history: history as MessageData[],
-    },
+    prompt: [
+      ...history.map(message => ({
+        role: message.role,
+        content: message.content,
+      })),
+    ],
   });
 
   return response;
