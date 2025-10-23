@@ -29,7 +29,7 @@ export default function LiveAssistant() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
 
-      const live = await liveAssistant.stream();
+      const live = await liveAssistant();
 
       mediaRecorderRef.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
