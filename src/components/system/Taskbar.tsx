@@ -7,9 +7,12 @@ import { SystemTray } from './SystemTray';
 import { StartMenu } from './StartMenu';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Sparkles } from 'lucide-react';
+import { useDurgasAssistant } from '@/hooks/use-durgas-assistant';
 
 export function Taskbar() {
   const { windows, isStartMenuOpen, setStartMenuOpen, focusApp, toggleMinimize, openApp } = useDesktop();
+  const { toggleAssistant } = useDurgasAssistant();
   const pinnedApps = apps.filter(app => app.pinned);
 
   const handleAppClick = (appId: string) => {
@@ -30,7 +33,7 @@ export function Taskbar() {
     <>
       {isStartMenuOpen && <div className="fixed inset-0" onClick={() => setStartMenuOpen(false)} />}
       <StartMenu />
-      <footer className="fixed bottom-0 left-0 right-0 h-12 bg-neutral-800/50 backdrop-blur-2xl border-t border-white/20 flex justify-center items-center z-50">
+      <footer className="fixed bottom-0 left-0 right-0 h-12 bg-neutral-800/50 backdrop-blur-2xl border-t border-white/20 flex justify-center items-center z-40">
         <div className="flex items-center gap-2">
           <TooltipProvider>
             <Tooltip>
@@ -51,6 +54,20 @@ export function Taskbar() {
               </TooltipTrigger>
               <TooltipContent>
                 <p>Start</p>
+              </TooltipContent>
+            </Tooltip>
+             <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="p-3 rounded-md hover:bg-white/20 transition-colors"
+                  onClick={toggleAssistant}
+                  aria-label="Durgas Assistant"
+                >
+                  <Sparkles className="w-5 h-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Assistant</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

@@ -5,6 +5,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { useSettingsStore } from '@/store/settingsStore';
 import { useEffect } from 'react';
+import DurgasAssistant from '@/components/system/DurgasAssistant';
+import { DurgasAssistantProvider } from '@/hooks/use-durgas-assistant';
 
 // This is a client component because it uses hooks to update the theme
 const metadata: Metadata = {
@@ -32,8 +34,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
-        {children}
-        <Toaster />
+        <DurgasAssistantProvider>
+          {children}
+          <DurgasAssistant />
+          <Toaster />
+        </DurgasAssistantProvider>
       </body>
     </html>
   );

@@ -100,6 +100,10 @@ export default {
           '0%': { transform: 'translateY(0) scale(1)', opacity: '1' },
           '100%': { transform: 'translateY(2rem) scale(0.95)', opacity: '0' },
         },
+        'spin-slow': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -107,6 +111,7 @@ export default {
         'spinner-spin': 'spinner-spin 1s linear infinite',
         'start-menu-open': 'start-menu-open 0.2s ease-out forwards',
         'start-menu-close': 'start-menu-close 0.2s ease-in forwards',
+        'spin-slow': 'spin-slow 3s linear infinite',
       },
     },
   },
