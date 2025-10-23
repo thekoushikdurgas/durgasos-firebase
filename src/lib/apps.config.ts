@@ -13,7 +13,7 @@ import SettingsApp from '@/components/apps/Settings';
 import Notepad from '@/components/apps/Notepad';
 import Terminal from '@/components/apps/Terminal';
 import VideoPlayer from '@/components/apps/VideoPlayer';
-import ImageStudio from '@/components/apps/ImageStudio';
+import CreatorStudio from '@/components/apps/CreatorStudio';
 import GeminiChat from '@/components/apps/GeminiChat';
 
 export interface App {
@@ -124,13 +124,13 @@ export const apps: App[] = [
     fileAssociation: '.mp4',
   },
   {
-    id: 'image-studio',
-    title: 'Image Studio',
+    id: 'creator-studio',
+    title: 'Creator Studio',
     Icon: Wand2,
-    Component: ImageStudio,
+    Component: CreatorStudio,
     pinned: false,
     desktop: true,
-    defaultSize: { width: 512, height: 640 },
+    defaultSize: { width: 512, height: 720 },
   },
   {
     id: 'gemini-chat',
