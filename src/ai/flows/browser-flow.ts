@@ -39,9 +39,9 @@ export async function browserQuery(input: z.infer<typeof BrowserQueryInputSchema
   });
 
   return {
-    text: response.text,
+    text: response.text(),
     sources:
-      response.references?.flatMap(ref =>
+      response.references()?.flatMap(ref =>
         ref.tool?.outputs?.flatMap(out => out.googleSearch?.results.map(r => r.uri))
       ).filter(Boolean) || [],
   };

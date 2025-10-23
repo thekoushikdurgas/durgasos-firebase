@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { BootScreen } from '@/components/system/BootScreen';
 import { Desktop } from '@/components/system/Desktop';
 import { Taskbar } from '@/components/system/Taskbar';
-import { DesktopProvider } from '@/context/DesktopContext';
 
 export default function Home() {
   const [booting, setBooting] = useState(true);
@@ -22,11 +21,9 @@ export default function Home() {
   }
 
   return (
-    <DesktopProvider>
-      <div className="h-screen w-screen overflow-hidden bg-black select-none">
-        <Desktop />
-        <Taskbar />
-      </div>
-    </DesktopProvider>
+    <div className="h-screen w-screen overflow-hidden bg-black select-none">
+      <Desktop />
+      <Taskbar />
+    </div>
   );
 }

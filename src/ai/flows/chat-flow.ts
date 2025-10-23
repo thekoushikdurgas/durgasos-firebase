@@ -31,7 +31,7 @@ export async function chat(input: z.infer<typeof ChatInputSchema>) {
     ],
   });
 
-  return response;
+  return { text: response.text() };
 }
 
 const TextToSpeechInputSchema = z.object({

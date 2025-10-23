@@ -16,25 +16,25 @@ const AssistantInputSchema = z.object({
   prompt: z.string(),
 });
 
-const openAppTool = defineTool(
-  {
-    name: 'openApp',
-    description: 'Opens an application on the desktop',
-    inputSchema: z.object({
-      appId: z.string().describe('The ID of the app to open'),
-    }),
-    outputSchema: z.string(),
-  },
-  async ({ appId }) => {
-    // This is a placeholder. The actual app opening is handled on the client.
-    return `Successfully opened ${appId}`;
-  }
-);
-
 
 export async function assistant(input: z.infer<typeof AssistantInputSchema>) {
   const ai = await getGenkit();
   const { prompt } = input;
+  
+  const openAppTool = defineTool(
+    {
+      name: 'openApp',
+      description: 'Opens an application on the desktop',
+      inputSchema: z.object({
+        appId: z.string().describe('The ID of the app to open'),
+      }),
+      outputSchema: z.string(),
+    },
+    async ({ appId }) => {
+      // This is a placeholder. The actual app opening is handled on the client.
+      return `Successfully opened ${appId}`;
+    }
+  );
 
   const llm = googleAI.model('gemini-2.5-flash');
 
