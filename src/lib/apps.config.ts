@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentType } from 'react';
-import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon, Film, Wand2 } from 'lucide-react';
+import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon, Film, Wand2, MessageCircle } from 'lucide-react';
 
 import AboutMe from '@/components/apps/AboutMe';
 import Portfolio from '@/components/apps/Portfolio';
@@ -14,6 +14,7 @@ import Notepad from '@/components/apps/Notepad';
 import Terminal from '@/components/apps/Terminal';
 import VideoPlayer from '@/components/apps/VideoPlayer';
 import ImageStudio from '@/components/apps/ImageStudio';
+import GeminiChat from '@/components/apps/GeminiChat';
 
 export interface App {
   id: string;
@@ -130,5 +131,14 @@ export const apps: App[] = [
     pinned: false,
     desktop: true,
     defaultSize: { width: 512, height: 640 },
+  },
+  {
+    id: 'gemini-chat',
+    title: 'Gemini Chat',
+    Icon: MessageCircle,
+    Component: GeminiChat,
+    pinned: false,
+    desktop: true,
+    defaultSize: { width: 540, height: 720 },
   }
 ];
