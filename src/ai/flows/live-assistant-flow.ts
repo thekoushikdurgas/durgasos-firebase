@@ -7,6 +7,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 
 export const liveAssistant = ai.defineFlow(
   {
@@ -15,7 +16,7 @@ export const liveAssistant = ai.defineFlow(
     outputSchema: z.void(),
   },
   async (stream) => {
-    const llm = ai.getModel('googleai/gemini-2.5-flash-native-audio-preview-09-2025');
+    const llm = ai.getModel(googleAI.model('gemini-2.5-flash-native-audio-preview-09-2025'));
 
     await ai.live.connect(
       {
