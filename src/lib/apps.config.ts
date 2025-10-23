@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentType } from 'react';
-import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon } from 'lucide-react';
+import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon, Film } from 'lucide-react';
 
 import AboutMe from '@/components/apps/AboutMe';
 import Portfolio from '@/components/apps/Portfolio';
@@ -12,6 +12,7 @@ import FileExplorer from '@/components/apps/FileExplorer';
 import SettingsApp from '@/components/apps/Settings';
 import Notepad from '@/components/apps/Notepad';
 import Terminal from '@/components/apps/Terminal';
+import VideoPlayer from '@/components/apps/VideoPlayer';
 
 export interface App {
   id: string;
@@ -110,4 +111,14 @@ export const apps: App[] = [
     desktop: true,
     defaultSize: { width: 640, height: 384 },
   },
+  {
+    id: 'video',
+    title: 'Video Player',
+    Icon: Film,
+    Component: VideoPlayer,
+    pinned: false,
+    desktop: false,
+    defaultSize: { width: 640, height: 480 },
+    fileAssociation: '.mp4',
+  }
 ];

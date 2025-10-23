@@ -32,6 +32,7 @@ export const mockFileSystem: FileSystemItem[] = [
             children: [
               { id: 'project-plan.pdf', name: 'project-plan.pdf', type: 'file' },
               { id: 'notes.txt', name: 'notes.txt', type: 'file', content: 'This is a note inside a text file.' },
+              { id: 'sample.mp4', name: 'sample.mp4', type: 'file', content: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
             ],
           },
           {
