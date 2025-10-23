@@ -25,6 +25,7 @@ export const DurgasAssistantProvider = ({ children }: { children: React.ReactNod
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { openApp } = useDesktop();
   const conversationHistory = useRef<MessageData[]>([]);
+  const isStoppingWakeWord = useRef(false);
 
 
   const speakResponse = useCallback(async (text: string) => {
@@ -41,17 +42,20 @@ export const DurgasAssistantProvider = ({ children }: { children: React.ReactNod
                 setIsAssistantOpen(false);
                 setAssistantState('idle');
                 // Restart wake word listener after speaking
+                isStoppingWakeWord.current = false;
                 wakeWordRecognizerRef.current?.start();
             };
         } else {
             setIsAssistantOpen(false);
             setAssistantState('idle');
+            isStoppingWakeWord.current = false;
             wakeWordRecognizerRef.current?.start();
         }
     } catch (error) {
         console.error('TTS error:', error);
         setIsAssistantOpen(false);
         setAssistantState('idle');
+        isStoppingWakeWord.current = false;
         wakeWordRecognizerRef.current?.start();
     }
 }, []);
@@ -129,12 +133,23 @@ export const DurgasAssistantProvider = ({ children }: { children: React.ReactNod
             const transcript = event.results[i][0].transcript.trim().toLowerCase();
             if (transcript.includes('durgas')) {
                 console.log('Wake word detected!');
+                isStoppingWakeWord.current = true;
                 wakeWordRecognizerRef.current?.stop();
                 startCommandRecognition();
             }
         }
     };
-    wakeWordRecognizerRef.current.onerror = (event) => console.error('Wake word recognition error:', event.error);
+    wakeWordRecognizerRef.current.onerror = (event) => {
+      if (event.error !== 'no-speech') {
+        console.error('Wake word recognition error:', event.error);
+      }
+    };
+    wakeWordRecognizerRef.current.onend = () => {
+        // Restart the recognizer if it stops for any reason other than us explicitly stopping it
+        if (!isStoppingWakeWord.current) {
+            wakeWordRecognizerRef.current?.start();
+        }
+    };
     wakeWordRecognizerRef.current.start();
 
 
@@ -155,7 +170,8 @@ export const DurgasAssistantProvider = ({ children }: { children: React.ReactNod
         setAssistantState('idle');
         setIsAssistantOpen(false);
         // Restart wake word listener on error
-        if(wakeWordRecognizerRef.current?.onend === null) wakeWordRecognizerRef.current?.start();
+        isStoppingWakeWord.current = false;
+        wakeWordRecognizerRef.current?.start();
     };
 
     commandRecognizerRef.current.onend = () => {
@@ -165,11 +181,13 @@ export const DurgasAssistantProvider = ({ children }: { children: React.ReactNod
             setAssistantState('idle');
             setIsAssistantOpen(false);
             // Restart wake word listener
+            isStoppingWakeWord.current = false;
             wakeWordRecognizerRef.current?.start();
         }
     };
 
     return () => {
+      isStoppingWakeWord.current = true;
       wakeWordRecognizerRef.current?.stop();
       commandRecognizerRef.current?.stop();
     }
@@ -181,8 +199,10 @@ export const DurgasAssistantProvider = ({ children }: { children: React.ReactNod
         commandRecognizerRef.current?.stop();
         setIsAssistantOpen(false);
         setAssistantState('idle');
+        isStoppingWakeWord.current = false;
         wakeWordRecognizerRef.current?.start();
     } else {
+        isStoppingWakeWord.current = true;
         wakeWordRecognizerRef.current?.stop();
         startCommandRecognition();
     }
