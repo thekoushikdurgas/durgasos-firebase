@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentType } from 'react';
-import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon, Film, Wand2, MessageCircle } from 'lucide-react';
+import { Briefcase, Globe, User, Store, Smile, Folder, Settings, Notebook, Terminal as TerminalIcon, Film, Wand2, MessageCircle, MicVocal } from 'lucide-react';
 
 import AboutMe from '@/components/apps/AboutMe';
 import Portfolio from '@/components/apps/Portfolio';
@@ -15,6 +15,7 @@ import Terminal from '@/components/apps/Terminal';
 import VideoPlayer from '@/components/apps/VideoPlayer';
 import CreatorStudio from '@/components/apps/CreatorStudio';
 import GeminiChat from '@/components/apps/GeminiChat';
+import LiveAssistant from '@/components/apps/LiveAssistant';
 
 export interface App {
   id: string;
@@ -140,5 +141,14 @@ export const apps: App[] = [
     pinned: false,
     desktop: true,
     defaultSize: { width: 540, height: 720 },
+  },
+  {
+    id: 'live-assistant',
+    title: 'Live Assistant',
+    Icon: MicVocal,
+    Component: LiveAssistant,
+    pinned: false,
+    desktop: true,
+    defaultSize: { width: 500, height: 640 },
   }
 ];
