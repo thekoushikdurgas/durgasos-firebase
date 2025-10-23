@@ -5,7 +5,7 @@
  * - generateImage: Generates an image from a text prompt.
  */
 
-import { ai } from '@/ai/genkit';
+import { getGenkit } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const GenerateImageInputSchema = z.object({
@@ -14,6 +14,7 @@ const GenerateImageInputSchema = z.object({
 });
 
 export async function generateImage(input: z.infer<typeof GenerateImageInputSchema>) {
+  const ai = await getGenkit();
   const { media } = await ai.generate({
     model: 'googleai/imagen-4.0-fast-generate-001',
     prompt: input.prompt,
@@ -24,11 +25,13 @@ export async function generateImage(input: z.infer<typeof GenerateImageInputSche
   return { media };
 }
 
-ai.defineFlow(
-  {
-    name: 'generateImageFlow',
-    inputSchema: GenerateImageInputSchema,
-    outputSchema: z.any(),
-  },
-  generateImage
-);
+getGenkit().then(ai => {
+  ai.defineFlow(
+    {
+      name: 'generateImageFlow',
+      inputSchema: GenerateImageInputSchema,
+      outputSchema: z.any(),
+    },
+    generateImage
+  );
+});

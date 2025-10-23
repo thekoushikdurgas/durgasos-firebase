@@ -6,7 +6,7 @@
  * - textToSpeech - A function that converts text into speech audio.
  */
 
-import { ai } from '@/ai/genkit';
+import { getGenkit } from '@/ai/genkit';
 import { z } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 import wav from 'wav';
@@ -18,6 +18,7 @@ const ChatInputSchema = z.object({
 });
 
 export async function chat(input: z.infer<typeof ChatInputSchema>) {
+  const ai = await getGenkit();
   const { history, model } = input;
 
   const response = await ai.generate({
@@ -38,6 +39,7 @@ const TextToSpeechInputSchema = z.object({
 });
 
 export async function textToSpeech(input: z.infer<typeof TextToSpeechInputSchema>) {
+  const ai = await getGenkit();
   const { media } = await ai.generate({
     model: googleAI.model('gemini-2.5-flash-preview-tts'),
     config: {
@@ -93,20 +95,22 @@ async function toWav(
   });
 }
 
-ai.defineFlow(
-  {
-    name: 'chatFlow',
-    inputSchema: ChatInputSchema,
-    outputSchema: z.any(),
-  },
-  chat
-);
+getGenkit().then(ai => {
+  ai.defineFlow(
+    {
+      name: 'chatFlow',
+      inputSchema: ChatInputSchema,
+      outputSchema: z.any(),
+    },
+    chat
+  );
 
-ai.defineFlow(
-  {
-    name: 'textToSpeechFlow',
-    inputSchema: TextToSpeechInputSchema,
-    outputSchema: z.any(),
-  },
-  textToSpeech
-);
+  ai.defineFlow(
+    {
+      name: 'textToSpeechFlow',
+      inputSchema: TextToSpeechInputSchema,
+      outputSchema: z.any(),
+    },
+    textToSpeech
+  );
+});
